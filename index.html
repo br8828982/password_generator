@@ -16,7 +16,16 @@
       padding: 10px;
       border: 1px solid #ccc;
       width: 300px;
+      text-align: center;
+      outline: none;
+      border-radius: 5px;
+    }
+    #lengthValue {
       display: inline-block;
+      font-size: 16px;
+      background: red;
+      border: none;
+      outline: none;
     }
   </style>
 </head>
@@ -24,7 +33,7 @@
 
   <label for="length">Password Length: </label>
   <input type="range" id="length" min="8" max="20" value="12">
-  <span id="lengthValue">12</span>
+  <input id="lengthValue" readonly value="12">
   <br>
 
   <form id="checkboxForm">
@@ -42,59 +51,52 @@
   </form>
 
   <br>
-  <div id="password"></div>
+  <input id="password" readonly>
 
   <script>
     const checkboxForm = document.getElementById('checkboxForm');
-
+    const checkboxes = {
+      lowercase: document.getElementById("lowercase"),
+      uppercase: document.getElementById("uppercase"),
+      numbers: document.getElementById("numbers"),
+      symbols: document.getElementById("symbols")
+    };
+    
     checkboxForm.addEventListener('change', (event) => {
       const checkedCheckbox = checkboxForm.querySelector('input[name="option"]:checked');
       
-      if (!checkedCheckbox) event.target.checked = true;
-
-      generatePassword();
+      if (checkedCheckbox)  {
+        generatePassword();
+        return;
+      }
+      
+      event.target.checked = true;
     });
 
     function generatePassword() {
       const length = document.getElementById("length").value;
-      const lowercase = document.getElementById("lowercase").checked;
-      const uppercase = document.getElementById("uppercase").checked;
-      const numbers = document.getElementById("numbers").checked;
-      const symbols = document.getElementById("symbols").checked;
-
-      const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
-      const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      const numberChars = '0123456789';
-      const symbolChars = '!@#$%^&*()-_+=<>?/{}[]|';
-
       let allChars = '';
       let password = '';
 
-      if (lowercase) {
-        allChars += lowercaseChars;
-        password += getRandomChar(lowercaseChars);
-      }
+      const charSets = {
+        lowercase: 'abcdefghijklmnopqrstuvwxyz',
+        uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        numbers: '0123456789',
+        symbols: '!@#$%^&*()-_+=<>?/{}[]|'
+      };
 
-      if (uppercase) {
-        allChars += uppercaseChars;
-        password += getRandomChar(uppercaseChars);
-      }
-
-      if (numbers) {
-        allChars += numberChars;
-        password += getRandomChar(numberChars);
-      }
-
-      if (symbols) {
-        allChars += symbolChars;
-        password += getRandomChar(symbolChars);
+      for (const char in checkboxes) {
+        if (checkboxes[char].checked) {
+          allChars += charSets[char];
+          password += getRandomChar(charSets[char]);
+        }
       }
 
       for (let i = password.length; i < length; i++) {
         password += getRandomChar(allChars);
       }
 
-      document.getElementById("password").innerText = password;
+      document.getElementById("password").value = password;
     }
 
     function getRandomChar(characters) {
@@ -103,7 +105,7 @@
     }
 
     document.getElementById("length").addEventListener("input", function () {
-      document.getElementById("lengthValue").innerText = this.value;
+      document.getElementById("lengthValue").value = this.value;
       generatePassword();
     });
 
