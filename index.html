@@ -1,114 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Password Generator</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    #password {
-      font-size: 18px;
-      margin-top: 10px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      width: 300px;
-      display: inline-block;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
 </head>
 <body>
 
-  <label for="length">Password Length: </label>
-  <input type="range" id="length" min="8" max="20" value="12">
-  <span id="lengthValue">12</span>
-  <br>
+    <div>
+        <label for="total-char">Total Characters:</label>
+        <input type="number" id="total-char" value="12">
+    </div>
 
-  <form id="checkboxForm">
-    <input type="checkbox" id="lowercase" name="option" checked>
-    <label for="lowercase">Include Lowercase</label>
+    <div>
+        <label for="upper-case">Include Uppercase:</label>
+        <input type="checkbox" id="upper-case" checked>
+    </div>
 
-    <input type="checkbox" id="uppercase" name="option" checked>
-    <label for="uppercase">Include Uppercase</label>
+    <div>
+        <label for="lower-case">Include Lowercase:</label>
+        <input type="checkbox" id="lower-case" checked>
+    </div>
 
-    <input type="checkbox" id="numbers" name="option" checked>
-    <label for="numbers">Include Numbers</label>
+    <div>
+        <label for="numbers">Include Numbers:</label>
+        <input type="checkbox" id="numbers" checked>
+    </div>
 
-    <input type="checkbox" id="symbols" name="option" checked>
-    <label for="symbols">Include Symbols</label>
-  </form>
+    <div>
+        <label for="symbols">Include Symbols:</label>
+        <input type="checkbox" id="symbols" checked>
+    </div>
 
-  <br>
-  <div id="password"></div>
+    <div>
+        <button id="btn">Generate Password</button>
+    </div>
 
-  <script>
-    const checkboxForm = document.getElementById('checkboxForm');
+    <div>
+        <p id="pass-box"></p>
+    </div>
 
-    checkboxForm.addEventListener('change', (event) => {
-      const checkedCheckbox = checkboxForm.querySelector('input[name="option"]:checked');
-      
-      if (!checkedCheckbox) event.target.checked = true;
+    <script>
+        const upperSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lowerSet = "abcdefghijklmnopqrstuvwxyz";
+        const numberSet = "1234567890";
+        const symbolSet = "~!@#$%^&*()_+/";
+        
+        const passBox = document.getElementById("pass-box");
+        const totalChar = document.getElementById("total-char");
+        const upperInput = document.getElementById("upper-case");
+        const lowerInput = document.getElementById("lower-case");
+        const numberInput = document.getElementById("numbers");
+        const symbolInput = document.getElementById("symbols");
 
-      generatePassword();
-    });
+        const getRandomData = (dataSet) => dataSet[Math.floor(Math.random() * dataSet.length)];
 
-    function generatePassword() {
-      const length = document.getElementById("length").value;
-      const lowercase = document.getElementById("lowercase").checked;
-      const uppercase = document.getElementById("uppercase").checked;
-      const numbers = document.getElementById("numbers").checked;
-      const symbols = document.getElementById("symbols").checked;
+        const generatePassword = (password = "") => {
+            if (upperInput.checked) password += getRandomData(upperSet);
+            if (lowerInput.checked) password += getRandomData(lowerSet);
+            if (numberInput.checked) password += getRandomData(numberSet);
+            if (symbolInput.checked) password += getRandomData(symbolSet);
+            if (password.length < totalChar.value) return generatePassword(password);
 
-      const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
-      const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      const numberChars = '0123456789';
-      const symbolChars = '!@#$%^&*()-_+=<>?/{}[]|';
+            password = password.slice(0, totalChar.value);
 
-      let allChars = '';
-      let password = '';
+            passBox.innerText = password;
+        }
 
-      if (lowercase) {
-        allChars += lowercaseChars;
-        password += getRandomChar(lowercaseChars);
-      }
+        generatePassword();
 
-      if (uppercase) {
-        allChars += uppercaseChars;
-        password += getRandomChar(uppercaseChars);
-      }
+        const generateBtn = document.getElementById("btn");
 
-      if (numbers) {
-        allChars += numberChars;
-        password += getRandomChar(numberChars);
-      }
-
-      if (symbols) {
-        allChars += symbolChars;
-        password += getRandomChar(symbolChars);
-      }
-
-      for (let i = password.length; i < length; i++) {
-        password += getRandomChar(allChars);
-      }
-
-      document.getElementById("password").innerText = password;
-    }
-
-    function getRandomChar(characters) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      return characters[randomIndex];
-    }
-
-    document.getElementById("length").addEventListener("input", function () {
-      document.getElementById("lengthValue").innerText = this.value;
-      generatePassword();
-    });
-
-    generatePassword();
-  </script>
+        generateBtn.addEventListener("click", () => {
+          generatePassword();
+        });
+    </script>
 
 </body>
 </html>
