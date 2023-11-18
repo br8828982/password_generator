@@ -85,10 +85,10 @@
         symbols: '!@#$%^&*()-_+=<>?/{}[]|'
       };
 
-      for (const char in checkboxes) {
-        if (checkboxes[char].checked) {
-          allChars += charSets[char];
-          password += getRandomChar(charSets[char]);
+      for (const charset in checkboxes) {
+        if (checkboxes[charset].checked) {
+          allChars += charSets[charset];
+          password += getRandomChar(charSets[charset]);
         }
       }
 
